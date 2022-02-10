@@ -1,0 +1,24 @@
+{
+  "name": "rpf",
+  "version": "1.0.0",
+  "description": "Data aggregator from pipedrive, redash, freshdesk.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dhruv42/rpf.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dhruv42/rpf/issues"
+  },
+  "homepage": "https://github.com/dhruv42/rpf#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6"
+  }
+}
