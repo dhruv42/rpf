@@ -1,6 +1,6 @@
 const constants = require("../../constants.json");
 const rp = require("request-promise");
-const { getMatchingBillers } = require("../../helpers/filterBillers");
+const { getMatchingBillers, formQuery } = require("../../helpers/common");
 
 const searchTickets = async (req, res) => {
   try {
@@ -30,19 +30,6 @@ const searchTickets = async (req, res) => {
   }
 };
 
-function formQuery(allPossibleBillers) {
-    const parameter = 'cf_billermerchant_name';
-    let query = '';
-    for (let i = 0; i < allPossibleBillers.length; i++) {
-        const element = allPossibleBillers[i];
-        const singleQuery = `${parameter}:'${element}'`
-        if(query.length + singleQuery.length < 512) {
-            query+=`${singleQuery} OR `
-        }
-    }
-    query= query.slice(0, query.lastIndexOf("OR"))
-    return query
-}
 
 module.exports = {
   searchTickets,
