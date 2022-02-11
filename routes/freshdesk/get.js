@@ -6,7 +6,6 @@ const searchTickets = async (req, res) => {
   try {
     const keyword = req.query.name;
     const allPossibleBillers = getMatchingBillers(keyword);
-    console.log(allPossibleBillers);
     let uri = `${constants.FRESHDESK_URL}/api/v2/search/tickets`;
     let query = formQuery(allPossibleBillers);
     if (query) {
@@ -36,12 +35,12 @@ function formQuery(allPossibleBillers) {
     let query = '';
     for (let i = 0; i < allPossibleBillers.length; i++) {
         const element = allPossibleBillers[i];
-        if(i === allPossibleBillers.length - 1) {
-            query+=`${parameter}:${element}`
-        } else {
-            query+=`${parameter}:${element} OR `
+        const singleQuery = `${parameter}:'${element}'`
+        if(query.length + singleQuery.length < 512) {
+            query+=`${singleQuery} OR `
         }
     }
+    query= query.slice(0, query.lastIndexOf("OR"))
     return query
 }
 

@@ -1,4 +1,4 @@
-const constants = require('../constants.json')
+const constants = require('../../constants.json')
 const rp = require('request-promise');
 
 const fetchData = async(req, res) => {
