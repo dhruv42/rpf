@@ -25,6 +25,23 @@ function createDealsReponse(data) {
     return resp;
 }
 
+function createSearchDealsResponse(data) {
+    const resp = data.items.map((i) => {
+        const obj = {
+            id:i.item.id,
+            title: i.item.title,
+            currency:i.currency,
+            dealStage:i.item.stage.name,
+            personName:i.item.person.name,
+            organizationId:i.item.organization.id,
+            organizationName: i.item.organization.name,
+            notes:i.item.notes
+        }
+        return obj;
+    })
+    return resp;
+}
+
 const responseHandler = (success, code = 400, message = 'valid', obj) => {
     const response =  {
         success,
@@ -39,5 +56,6 @@ const responseHandler = (success, code = 400, message = 'valid', obj) => {
 module.exports = {
     responseHandler,
     createListOrganizationResponse,
-    createDealsReponse
+    createDealsReponse,
+    createSearchDealsResponse
 }

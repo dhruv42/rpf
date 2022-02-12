@@ -1,6 +1,6 @@
 const config = require('../../config.json')
 const rp = require('request-promise');
-const {createListOrganizationResponse, createDealsReponse} = require('../../helpers/requestResponse')
+const {createListOrganizationResponse, createDealsReponse, createSearchDealsResponse} = require('../../helpers/requestResponse')
 const { messages, statusCode } = require("../../constants/constants.json");
 const { responseHandler } = require("../../helpers/requestResponse");
 
@@ -92,8 +92,8 @@ const searchDeals = async(req, res) => {
             json:true
         }
         const response = await rp(options)
-        // const person = await getPersonDetails()
-        res.status(statusCode.OK).json(responseHandler(true, statusCode.OK, messages.SUCCESS, response))
+        const finalResponse = createSearchDealsResponse(response.data)
+        res.status(statusCode.OK).json(responseHandler(true, statusCode.OK, messages.SUCCESS, finalResponse))
     } catch (error) {
         console.log(error);
         res.status(statusCode.INTERNAL_SERVER).json(responseHandler(false, statusCode.INTERNAL_SERVER, messages.SOMEHTING_WENT_WRONG, error))
