@@ -19,8 +19,15 @@ const fetchData = async (req, res) => {
     const dataRows = response.query_result.data.rows;
     const responseRows = []
     for (const row of dataRows) {
-      if (row.biller.toUpperCase().includes(biller.toUpperCase()))
-        responseRows.push(row)
+      if (row.biller.toUpperCase().includes(biller.toUpperCase())) {
+        const dataPoint = {};
+        dataPoint["product"] = row.ui_product_type;
+        dataPoint["txns"] = row.total_txns;
+        dataPoint["month"] = row.txn_date;
+        dataPoint["monthNumber"] = row.txn_month;
+        dataPoint["biller"] = row.biller;
+        responseRows.push(dataPoint);
+      }
     }
     res.status(statusCode.OK).json(responseHandler(true, statusCode.OK, messages.SUCCESS, responseRows));
   } catch (error) {
