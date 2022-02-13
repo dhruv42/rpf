@@ -26,10 +26,16 @@ const fetchData = async (req, res) => {
         dataPoint["month"] = row.txn_date;
         dataPoint["monthNumber"] = row.txn_month;
         if (row.biller in responseRows) {
-          responseRows[row.biller].push(dataPoint)
+          if (row.ui_product_type in responseRows[row.biller])
+            responseRows[row.biller][row.ui_product_type].push(dataPoint)
+          else {
+            responseRows[row.biller][row.ui_product_type] = []
+            responseRows[row.biller][row.ui_product_type].push(dataPoint)
+          }
         } else {
-          responseRows[row.biller] = []
-          responseRows[row.biller].push(dataPoint)
+          responseRows[row.biller] = {}
+          responseRows[row.biller][row.ui_product_type] = []
+          responseRows[row.biller][row.ui_product_type].push(dataPoint)
         }
       }
     }
