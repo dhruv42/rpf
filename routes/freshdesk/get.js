@@ -2,7 +2,7 @@ const config = require("../../config.json");
 const rp = require("request-promise");
 const { getMatchingBillers, formQuery } = require("../../helpers/common");
 const { messages, statusCode } = require("../../constants/constants.json");
-const { responseHandler } = require("../../helpers/requestResponse");
+const { responseHandler,createTicketResponse } = require("../../helpers/requestResponse");
 
 const searchTickets = async (req, res) => {
   try {
@@ -24,7 +24,12 @@ const searchTickets = async (req, res) => {
       },
     };
     const response = await rp(options);
-    res.status(statusCode.OK).json(responseHandler(true, statusCode.OK, messages.SUCCESS, response))
+    const filteredResponse = createTicketResponse(response)
+    const finalResponse = {
+      results:filteredResponse,
+      total:response.total
+    }
+    res.status(statusCode.OK).json(responseHandler(true, statusCode.OK, messages.SUCCESS, finalResponse))
   } catch (error) {
     console.log(error);
     res.status(statusCode.BAD_REQUEST).json(responseHandler(false, statusCode.BAD_REQUEST, messages.BAD_REQUEST, error));

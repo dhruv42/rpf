@@ -1,3 +1,5 @@
+const {FRESHDESK_TICKET_URL} = require('../config.json')
+
 function createListOrganizationResponse(data) {
     const resp = data.map((item) => {
         const obj = {
@@ -42,6 +44,24 @@ function createSearchDealsResponse(data) {
     return resp;
 }
 
+function createTicketResponse(data) {
+    const resp = data.results.map((ticket) => {
+        const obj = {
+            id: ticket.id,
+            ticketUrl:`${FRESHDESK_TICKET_URL}/${ticket.id}`,
+            subject: ticket.subject,
+            customFields: ticket.custom_fields,
+            ccEmails: ticket.cc_emails,
+            replyCcEmails:ticket.reply_cc_emails,
+            ticketCcEmails:ticket.ticket_cc_emails,
+            toEmails:ticket.to_emails,
+            priority:ticket.priority
+        }
+        return obj;
+    })
+    return resp;
+}
+
 const responseHandler = (success, code = 400, message = 'valid', obj) => {
     const response =  {
         success,
@@ -57,5 +77,6 @@ module.exports = {
     responseHandler,
     createListOrganizationResponse,
     createDealsReponse,
-    createSearchDealsResponse
+    createSearchDealsResponse,
+    createTicketResponse
 }
