@@ -1,4 +1,4 @@
-const {FRESHDESK_TICKET_URL} = require('../config.json')
+const {FRESHDESK_TICKET_URL,PIPEDRIVE_DEAL_URL} = require('../config.json');
 
 function createListOrganizationResponse(data) {
     const resp = data.map((item) => {
@@ -15,12 +15,17 @@ function createListOrganizationResponse(data) {
 function createDealsReponse(data) {
     const resp = data.map((item) => {
         const obj = {
+            id:item.id,
+            url:`${PIPEDRIVE_DEAL_URL}/${item.id}`,
             ownerName:item.owner_name,
             ownerEmail:item.creator_user_id.email,
             organizationName: item.org_id.name,
             currency: item.currency,
-            personName: item.person_name,
-            personEmail:item.person_id.email[0].value
+            personName: item?.person_name,
+            personEmail:item?.person_id?.email[0]?.value,
+            updateTime:item.update_time,
+            dealValue:item.value,
+            status:item.status
         }
         return obj
     })
@@ -32,6 +37,7 @@ function createSearchDealsResponse(data) {
         const obj = {
             id:i.item.id,
             title: i.item.title,
+            url:`${PIPEDRIVE_DEAL_URL}/${i.item.id}`,
             currency:i.currency,
             dealStage:i.item.stage.name,
             personName:i.item.person.name,
@@ -62,6 +68,16 @@ function createTicketResponse(data) {
     return resp;
 }
 
+function createOrganizationByIdResponse(data) {
+    const obj = {
+        id:data.id,
+        organizationName:data.name,
+        ownerName:data.owner_id.name,
+        ownerEmail:data.owner_id.email
+    }
+    return obj
+}
+
 const responseHandler = (success, code = 400, message = 'valid', obj) => {
     const response =  {
         success,
@@ -78,5 +94,6 @@ module.exports = {
     createListOrganizationResponse,
     createDealsReponse,
     createSearchDealsResponse,
-    createTicketResponse
+    createTicketResponse,
+    createOrganizationByIdResponse
 }

@@ -1,8 +1,8 @@
 const config = require('../../config.json')
 const rp = require('request-promise');
-const {createListOrganizationResponse, createDealsReponse, createSearchDealsResponse} = require('../../helpers/requestResponse')
+const {createListOrganizationResponse, createDealsReponse, createSearchDealsResponse, responseHandler, createOrganizationByIdResponse} = require('../../helpers/requestResponse')
 const { messages, statusCode } = require("../../constants/constants.json");
-const { responseHandler } = require("../../helpers/requestResponse");
+const { getDealDetailsByOrgId } = require("../../helpers/common");
 
 const listOrganizations = async(req, res) => {
     try {
@@ -23,12 +23,7 @@ const listOrganizations = async(req, res) => {
 const getOrganizationDealsById = async(req, res) => {
     try {
         const id = req.params.id;
-        const options = {
-            uri: `${config.PIPEDRIVE_URL}/v1/organizations/${id}/deals?api_token=${config.PIPEDRIVE_TOKEN}`,
-            method:"GET",
-            json:true
-        }
-        const response = await rp(options)
+        const response = await getDealDetailsByOrgId(id)
         const finalResponse = createDealsReponse(response.data)
         res.status(statusCode.OK).json(responseHandler(true, statusCode.OK, messages.SUCCESS, finalResponse))
     } catch (error) {
@@ -61,8 +56,16 @@ const getOrganizationById = async(req, res) => {
             method:"GET",
             json:true
         }
-        const response = await rp(options)
-        res.status(statusCode.OK).json(responseHandler(true, statusCode.OK, messages.SUCCESS, response.data))
+        const [response, dealsData] = await Promise.all([
+            rp(options),
+            getDealDetailsByOrgId(id)
+        ])
+        // const response = await rp(options)
+        // const dealsData = await getDealDetailsByOrgId(id)
+        const filteredDealsData = createDealsReponse(dealsData.data)
+        const finalResponse = createOrganizationByIdResponse(response.data)
+        finalResponse.deals = filteredDealsData
+        res.status(statusCode.OK).json(responseHandler(true, statusCode.OK, messages.SUCCESS, finalResponse))
     } catch (error) {
         console.log(error);
         res.status(statusCode.INTERNAL_SERVER).json(responseHandler(false, statusCode.INTERNAL_SERVER, messages.SOMEHTING_WENT_WRONG, error))
