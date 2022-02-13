@@ -17,7 +17,7 @@ const fetchData = async (req, res) => {
     };
     const response = await rp(options);
     const dataRows = response.query_result.data.rows;
-    const responseRows = []
+    const responseRows = {}
     for (const row of dataRows) {
       if (row.biller.toUpperCase().includes(biller.toUpperCase())) {
         const dataPoint = {};
@@ -25,8 +25,12 @@ const fetchData = async (req, res) => {
         dataPoint["txns"] = row.total_txns;
         dataPoint["month"] = row.txn_date;
         dataPoint["monthNumber"] = row.txn_month;
-        dataPoint["biller"] = row.biller;
-        responseRows.push(dataPoint);
+        if (row.biller in responseRows) {
+          responseRows[row.biller].push(dataPoint)
+        } else {
+          responseRows[row.biller] = []
+          responseRows[row.biller].push(dataPoint)
+        }
       }
     }
     res.status(statusCode.OK).json(responseHandler(true, statusCode.OK, messages.SUCCESS, responseRows));
